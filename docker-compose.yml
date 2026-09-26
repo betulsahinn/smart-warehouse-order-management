@@ -1,0 +1,27 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Server=sqlserver,1433;Database=SwomsDb;User Id=sa;Password=${SA_PASSWORD:?Set SA_PASSWORD};TrustServerCertificate=True;MultipleActiveResultSets=True
+      Jwt__Secret: ${JWT_SECRET:?Set JWT_SECRET}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sqlserver
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD:?Set SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - swoms-sqlserver-data:/var/opt/mssql
+
+volumes:
+  swoms-sqlserver-data:
