@@ -23,7 +23,7 @@ public static class DependencyInjection
         }
 
         services.AddDbContext<SwomsDbContext>(options =>
-            options.UseSqlServer(connectionString));
+            options.UseNpgsql(connectionString));
 
         services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<SwomsDbContext>());
