@@ -34,6 +34,7 @@ public sealed class GlobalExceptionMiddleware
         {
             ValidationException validationException => CreateValidationProblem(validationException),
             NotFoundException notFoundException => CreateProblem(StatusCodes.Status404NotFound, "Resource not found", notFoundException.Message),
+            ConcurrencyConflictException concurrencyException => CreateProblem(StatusCodes.Status409Conflict, "Concurrency conflict", concurrencyException.Message),
             DomainException domainException => CreateProblem(StatusCodes.Status400BadRequest, "Business rule violation", domainException.Message),
             UnauthorizedAccessException unauthorizedAccessException => CreateProblem(StatusCodes.Status401Unauthorized, "Unauthorized", unauthorizedAccessException.Message),
             _ => CreateProblem(StatusCodes.Status500InternalServerError, "An unexpected error occurred", "The server encountered an unexpected error.")

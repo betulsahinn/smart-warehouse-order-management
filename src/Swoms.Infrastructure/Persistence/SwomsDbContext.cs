@@ -1,4 +1,5 @@
 using Swoms.Application.Common.Interfaces;
+using Swoms.Application.Common.Exceptions;
 using Swoms.Domain.Common;
 using Swoms.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +45,7 @@ public sealed class SwomsDbContext : DbContext, IUnitOfWork
         base.OnModelCreating(modelBuilder);
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
         {
@@ -61,6 +62,40 @@ public sealed class SwomsDbContext : DbContext, IUnitOfWork
             }
         }
 
-        return base.SaveChangesAsync(cancellationToken);
+        foreach (var entry in ChangeTracker.Entries<StockItem>().Where(entry => entry.State == EntityState.Modified))
+        {
+            entry.Property(stock => stock.Version).CurrentValue = Guid.NewGuid();
+        }
+
+        try
+        {
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException exception) when (exception.Entries.Any(entry => entry.Entity is StockItem))
+        {
+            throw new ConcurrencyConflictException(
+                "Stock availability changed while the operation was being completed. Please retry.",
+                exception);
+        }
+    }
+
+    public async Task<TResult> ExecuteInTransactionAsync<TResult>(
+        Func<CancellationToken, Task<TResult>> operation,
+        CancellationToken cancellationToken = default)
+    {
+        await using var transaction = await Database.BeginTransactionAsync(cancellationToken);
+
+        try
+        {
+            var result = await operation(cancellationToken);
+            await SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return result;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
     }
 }

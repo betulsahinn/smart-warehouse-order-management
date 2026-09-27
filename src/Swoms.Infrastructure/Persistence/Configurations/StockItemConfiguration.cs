@@ -8,8 +8,12 @@ public sealed class StockItemConfiguration : IEntityTypeConfiguration<StockItem>
 {
     public void Configure(EntityTypeBuilder<StockItem> builder)
     {
-        builder.ToTable("StockItems");
+        builder.ToTable("StockItems", table =>
+            table.HasCheckConstraint(
+                "CK_StockItems_ValidQuantities",
+                "\"QuantityOnHand\" >= 0 AND \"ReservedQuantity\" >= 0 AND \"ReservedQuantity\" <= \"QuantityOnHand\""));
         builder.HasKey(stock => stock.Id);
+        builder.Property(stock => stock.Version).IsConcurrencyToken();
         builder.HasIndex(stock => new { stock.ProductId, stock.WarehouseId }).IsUnique();
         builder.HasOne(stock => stock.Product)
             .WithMany()

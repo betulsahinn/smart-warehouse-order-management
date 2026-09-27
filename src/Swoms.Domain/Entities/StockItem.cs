@@ -10,6 +10,11 @@ public sealed class StockItem : AuditableEntity
 
     public StockItem(Guid productId, Guid warehouseId, int quantityOnHand)
     {
+        if (quantityOnHand < 0)
+        {
+            throw new DomainException("Quantity on hand cannot be negative.");
+        }
+
         ProductId = productId;
         WarehouseId = warehouseId;
         QuantityOnHand = quantityOnHand;
@@ -26,6 +31,8 @@ public sealed class StockItem : AuditableEntity
     public int QuantityOnHand { get; private set; }
 
     public int ReservedQuantity { get; private set; }
+
+    public Guid Version { get; private set; } = Guid.NewGuid();
 
     public int AvailableQuantity => QuantityOnHand - ReservedQuantity;
 

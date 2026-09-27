@@ -8,12 +8,6 @@
 - Add refresh-token family/reuse detection.
   When a rotated refresh token is reused, revoke the entire token family for that user/session and require login. The current rotation flow revokes a single token but does not detect replay.
 
-- Add concurrency protection for stock operations.
-  Add row-version concurrency tokens to `StockItem` and handle `DbUpdateConcurrencyException` for reservations and adjustments. Current read-modify-write stock changes can oversell under concurrent order creation.
-
-- Wrap multi-aggregate write workflows in an explicit transaction.
-  Order creation touches customer, order, stock item, and stock movements. Keep the existing Unit of Work, but add transaction support for workflows that update multiple aggregates and inventory.
-
 - Validate warehouse existence before stock adjustment or order creation.
   `AdjustStockAsync` can create stock for any `WarehouseId`, and `CreateOrderAsync` trusts the supplied warehouse id. Add warehouse repository checks or domain/application validation.
 
@@ -34,14 +28,11 @@
 - Revisit repository abstraction boundaries.
   The generic repository is correctly registered and usable, but feature services are starting to express query details directly. Consider aggregate-specific repositories only where business queries become complex.
 
-- Extend Unit of Work beyond `SaveChangesAsync`.
-  The current Unit of Work maps to `DbContext.SaveChangesAsync`, which is valid but minimal. Add explicit transaction APIs only where needed, keeping simple use cases unchanged.
-
 - Add validation for uniqueness before database exceptions.
   Product SKU, warehouse code, user email, and order number have unique indexes, but not all application services perform friendly pre-checks. Add application-level checks and translate unique constraint failures.
 
 - Improve exception handling consistency.
-  Add `traceId`/request id to all `ProblemDetails`, set `Content-Type` explicitly, and handle `DbUpdateException`, `DbUpdateConcurrencyException`, and `SecurityTokenException`.
+  Add `traceId`/request id to all `ProblemDetails`, set `Content-Type` explicitly, and handle `DbUpdateException` and `SecurityTokenException`.
 
 - Avoid logging expected client errors as warnings by default.
   Validation, 404, and domain rule failures are normal client outcomes. Log them at Information or Debug to keep production warning logs meaningful.
