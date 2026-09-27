@@ -1,0 +1,36 @@
+<h1>Products</h1>
+
+@if (loading) {
+  <p class="message">Loading products...</p>
+} @else if (error) {
+  <p class="error-message">{{ error }}</p>
+} @else if (products.length === 0) {
+  <p class="message">No products found.</p>
+} @else {
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>SKU</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Unit Price</th>
+          <th>Reorder Level</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of products; track product.id) {
+          <tr>
+            <td>{{ product.sku }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.description || '-' }}</td>
+            <td>{{ product.unitPrice | number: '1.2-2' }}</td>
+            <td>{{ product.reorderLevel }}</td>
+            <td>{{ product.isActive ? 'Active' : 'Inactive' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

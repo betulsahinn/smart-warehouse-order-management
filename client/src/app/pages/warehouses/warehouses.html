@@ -1,0 +1,38 @@
+<h1>Warehouses</h1>
+
+@if (loading) {
+  <p class="message">Loading warehouses...</p>
+} @else if (error) {
+  <p class="error-message">{{ error }}</p>
+} @else if (warehouses.length === 0) {
+  <p class="message">No warehouses found.</p>
+} @else {
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Name</th>
+          <th>Address</th>
+          <th>City</th>
+          <th>State</th>
+          <th>Postal Code</th>
+          <th>Country</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (warehouse of warehouses; track warehouse.id) {
+          <tr>
+            <td>{{ warehouse.code }}</td>
+            <td>{{ warehouse.name }}</td>
+            <td>{{ warehouse.line1 }}</td>
+            <td>{{ warehouse.city }}</td>
+            <td>{{ warehouse.state }}</td>
+            <td>{{ warehouse.postalCode }}</td>
+            <td>{{ warehouse.country }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

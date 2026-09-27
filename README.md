@@ -7,14 +7,24 @@ Production-oriented .NET 8 Web API using Clean Architecture:
 - `Swoms.Infrastructure`: EF Core PostgreSQL persistence, repositories, unit of work, JWT and refresh-token services
 - `Swoms.API`: controllers, authentication, Swagger, Serilog, exception middleware
 
-## Run locally
+## Frontend
+
+```powershell
+cd client
+npm install
+npm start
+```
+
+The Angular development server runs at `http://localhost:4200` and uses the API at `http://localhost:5181`.
+
+## Backend
 
 ```powershell
 dotnet restore
 dotnet build
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost;Port=5432;Database=swoms;Username=swoms_app;Password=<password>" --project src/Swoms.API
 dotnet user-secrets set "Jwt:Secret" "<at-least-32-character-random-secret>" --project src/Swoms.API
-dotnet run --project src/Swoms.API/Swoms.API.csproj
+dotnet run --project src/Swoms.API
 ```
 
 Swagger is available at `/swagger` in development.

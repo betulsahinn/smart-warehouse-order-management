@@ -1,0 +1,33 @@
+.summary-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.summary-card {
+  background: #ffffff;
+  border: 1px solid #d9e2ec;
+  border-top: 4px solid #2878b5;
+  border-radius: 6px;
+  min-height: 120px;
+  padding: 1.25rem;
+}
+
+.summary-card:nth-child(2) {
+  border-top-color: #2f855a;
+}
+
+.summary-card:nth-child(3) {
+  border-top-color: #b7791f;
+}
+
+.summary-card h2 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+@media (max-width: 700px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}

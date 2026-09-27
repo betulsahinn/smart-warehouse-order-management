@@ -1,0 +1,17 @@
+<header class="app-header">
+  <div class="header-content">
+    <a class="brand" routerLink="/">SWOMS</a>
+    <nav aria-label="Main navigation">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+        >Dashboard</a
+      >
+      <a routerLink="/products" routerLinkActive="active">Products</a>
+      <a routerLink="/warehouses" routerLinkActive="active">Warehouses</a>
+      <a routerLink="/orders" routerLinkActive="active">Orders</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page-container">
+  <router-outlet />
+</main>
